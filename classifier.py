@@ -4,6 +4,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
+import torch.optim as optim
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -60,3 +61,18 @@ class Net(nn.Module):
 
 
 net = Net()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.001)
+
+for epoch in range(2):
+    for i, data in enumerate(training_loader, 0):
+        inputs, labels = data
+        optimizer.zero_grad()
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        if i % 1000 == 0:
+            print("Epoch {}, Image {}: loss = {}".format(epoch + 1, i, loss.item()))
+print("Finished training")
