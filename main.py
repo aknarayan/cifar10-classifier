@@ -17,7 +17,8 @@ def main():
     batch_size = preprocessor.batch_size
 
     classifier = Classifier()
-    classifier.train(training_loader, save_model)
+    if save_model:
+        classifier.train(training_loader)
     classifier.evaluate(test_loader, classes, batch_size)
 
 

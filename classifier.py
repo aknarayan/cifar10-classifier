@@ -9,24 +9,22 @@ class Classifier:
     def __init__(self):
         self.net = Net()
         self.criterion = nn.CrossEntropyLoss()
-        self.optimizer = optim.SGD(self.net.parameters(), lr=0.001)
+        self.optimizer = optim.SGD(self.net.parameters(), lr=0.01)
         self.PATH = './cifar_net.pth'
 
-    def train(self, training_loader, save_model):
-        if save_model:
-            for epoch in range(2):
-                for i, data in enumerate(training_loader, 0):
-                    inputs, labels = data
-                    self.optimizer.zero_grad()
-                    outputs = self.net(inputs)
-                    loss = self.criterion(outputs, labels)
-                    loss.backward()
-                    self.optimizer.step()
+    def train(self, training_loader):
+        for epoch in range(25):
+            for i, data in enumerate(training_loader, 0):
+                inputs, labels = data
+                self.optimizer.zero_grad()
+                outputs = self.net(inputs)
+                loss = self.criterion(outputs, labels)
+                loss.backward()
+                self.optimizer.step()
 
-                    if i % 1000 == 0:
-                        print("Epoch {}, Image {}: loss = {}".format(epoch + 1, i, loss.item()))
-            print("Finished training")
-            torch.save(self.net.state_dict(), self.PATH)
+            print("Epoch {}: loss = {}".format(epoch + 1, loss.item()))
+        print("Finished training")
+        torch.save(self.net.state_dict(), self.PATH)
 
     def evaluate(self, test_loader, classes, batch_size):
         self.net.load_state_dict(torch.load(self.PATH))
